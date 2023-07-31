@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('projects', function (Blueprint $table) {
+        Schema::create('projects', static function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->text('description')->nullable()->default(null);
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });
     }
