@@ -6,20 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('tasks', static function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('user_id')->constrained(); // User foreign key
             $table->string('title');
-            $table->text('description')->nullable()->default(null);
-            $table->integer('pomodoro')->nullable()->default(null);
-            $table->boolean('completed')->default(false);
-            $table->foreignId('user_id')->constrained();
-            $table->foreignId('project_id')->constrained();
-            $table->integer('date')->nullable()->default(null);
+            $table->text('description')->nullable();
+            $table->boolean('is_completed')->default(false);
+            $table->foreignId('pomodoro_id')->nullable()->constrained();
+            $table->foreignId('calendar_id')->nullable()->constrained();
+            $table->foreignId('project_id')->nullable()->constrained();
+
             $table->timestamps();
         });
     }
