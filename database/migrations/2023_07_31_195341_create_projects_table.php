@@ -13,7 +13,7 @@ return new class extends Migration
 
             $table->string('name');
             $table->text('description')->nullable()->default(null);
-            $table->foreignUuid('user_id')->constrained();
+            $table->uuid('user_id')->nullable();
 
             $table->timestamps();
         });

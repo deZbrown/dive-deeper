@@ -11,21 +11,18 @@ return new class extends Migration
         Schema::create('tasks', static function (Blueprint $table) {
             $table->uuid('id')->primary();
 
-            $table->foreignUuid('user_id')->constrained();
+            $table->uuid('user_id');
             $table->string('title');
             $table->text('description')->nullable();
             $table->boolean('is_completed')->default(false);
-            $table->foreignUuid('pomodoro_id')->nullable()->constrained();
-            $table->foreignUuid('calendar_id')->nullable()->constrained();
-            $table->foreignUuid('project_id')->nullable()->constrained();
+            $table->uuid('pomodoro_id')->nullable(); // No foreign key constraint
+            $table->uuid('calendar_id')->nullable(); // No foreign key constraint
+            $table->uuid('project_id')->nullable(); // No foreign key constraint
 
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('tasks');
