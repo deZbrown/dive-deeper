@@ -2,11 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Project extends Model
+class Pomodoro extends Model
 {
     use HasFactory;
 
@@ -14,13 +13,8 @@ class Project extends Model
     public $incrementing = false;
 
     protected $fillable = [
-        'name',
-        'description',
-        'user_id',
+        'duration',
+        'start_time',
+        'end_time',
     ];
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
 }
