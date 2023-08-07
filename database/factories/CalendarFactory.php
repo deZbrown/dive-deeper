@@ -2,17 +2,16 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
-use App\Models\Project;
+use App\Models\Calendar;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<Project>
+ * @extends Factory<Calendar>
  */
-class ProjectFactory extends Factory
+class CalendarFactory extends Factory
 {
-    protected $model = Project::class;
+    protected $model = Calendar::class;
 
     /**
      * Define the model's default state.
@@ -23,9 +22,7 @@ class ProjectFactory extends Factory
     {
         return [
             'id' => Str::uuid(),
-            'name' => $this->faker->word,
-            'description' => $this->faker->paragraph,
-            'user_id' => User::factory(),
+            'date' => $this->faker->date,
         ];
     }
 }

@@ -2,17 +2,16 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
-use App\Models\Project;
+use App\Models\Pomodoro;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<Project>
+ * @extends Factory<Pomodoro>
  */
-class ProjectFactory extends Factory
+class PomodoroFactory extends Factory
 {
-    protected $model = Project::class;
+    protected $model = Pomodoro::class;
 
     /**
      * Define the model's default state.
@@ -23,9 +22,9 @@ class ProjectFactory extends Factory
     {
         return [
             'id' => Str::uuid(),
-            'name' => $this->faker->word,
-            'description' => $this->faker->paragraph,
-            'user_id' => User::factory(),
+            'duration' => $this->faker->numberBetween(25, 60),
+            'start_time' => $this->faker->dateTime,
+            'end_time' => $this->faker->dateTime,
         ];
     }
 }
