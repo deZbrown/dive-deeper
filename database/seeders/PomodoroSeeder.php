@@ -2,13 +2,13 @@
 
 namespace Database\Seeders;
 
-use App\Models\Project;
+use App\Models\Pomodoro;
 use Illuminate\Database\Seeder;
 
-class ProjectSeeder extends Seeder
+class PomodoroSeeder extends Seeder
 {
     public function run(): void
     {
-        Project::factory(20)->create();
+        Pomodoro::factory(50)->create();
     }
 }

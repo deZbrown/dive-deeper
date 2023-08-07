@@ -2,13 +2,13 @@
 
 namespace Database\Seeders;
 
-use App\Models\Project;
+use App\Models\Calendar;
 use Illuminate\Database\Seeder;
 
-class ProjectSeeder extends Seeder
+class CalendarSeeder extends Seeder
 {
     public function run(): void
     {
-        Project::factory(20)->create();
+        Calendar::factory(30)->create();
     }
 }
