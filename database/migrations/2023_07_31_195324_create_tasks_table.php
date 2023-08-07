@@ -9,15 +9,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tasks', static function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
 
-            $table->foreignId('user_id')->constrained(); // User foreign key
+            $table->foreignUuid('user_id')->constrained();
             $table->string('title');
             $table->text('description')->nullable();
             $table->boolean('is_completed')->default(false);
-            $table->foreignId('pomodoro_id')->nullable()->constrained();
-            $table->foreignId('calendar_id')->nullable()->constrained();
-            $table->foreignId('project_id')->nullable()->constrained();
+            $table->foreignUuid('pomodoro_id')->nullable()->constrained();
+            $table->foreignUuid('calendar_id')->nullable()->constrained();
+            $table->foreignUuid('project_id')->nullable()->constrained();
 
             $table->timestamps();
         });

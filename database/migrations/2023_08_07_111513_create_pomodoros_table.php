@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pomodoros', static function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
 
             $table->unsignedInteger('duration');
             $table->timestamp('start_time')->nullable();

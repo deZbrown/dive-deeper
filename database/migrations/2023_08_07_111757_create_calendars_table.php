@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('calendars', static function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
 
             $table->date('date')->nullable();
             $table->time('time')->nullable();
