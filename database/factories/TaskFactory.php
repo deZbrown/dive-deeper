@@ -17,11 +17,17 @@ class TaskFactory extends Factory
 {
     protected $model = Task::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    #[\ReturnTypeWillChange]
+    #[\JetBrains\PhpStorm\ArrayShape([
+        'id' => "string",
+        'user_id' => User::class,
+        'title' => "string",
+        'description' => "string",
+        'is_completed' => "bool",
+        'pomodoro_id' => Pomodoro::class,
+        'calendar_id' => Calendar::class,
+        'project_id' => Project::class
+    ])]
     public function definition(): array
     {
         return [

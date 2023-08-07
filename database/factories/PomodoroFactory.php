@@ -13,11 +13,13 @@ class PomodoroFactory extends Factory
 {
     protected $model = Pomodoro::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    #[\ReturnTypeWillChange]
+    #[\JetBrains\PhpStorm\ArrayShape([
+        'id' => "string",
+        'duration' => "int",
+        'start_time' => \DateTimeInterface::class,
+        'end_time' => \DateTimeInterface::class
+    ])]
     public function definition(): array
     {
         return [

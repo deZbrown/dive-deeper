@@ -14,11 +14,13 @@ class ProjectFactory extends Factory
 {
     protected $model = Project::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    #[\ReturnTypeWillChange]
+    #[\JetBrains\PhpStorm\ArrayShape([
+        'id' => "string",
+        'name' => "string",
+        'description' => "string|null",
+        'user_id' => Factory::class
+    ])]
     public function definition(): array
     {
         return [

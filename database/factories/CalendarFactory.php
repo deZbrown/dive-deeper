@@ -13,11 +13,11 @@ class CalendarFactory extends Factory
 {
     protected $model = Calendar::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    #[\ReturnTypeWillChange]
+    #[\JetBrains\PhpStorm\ArrayShape([
+        'id' => "string",
+        'date' => "string"
+    ])]
     public function definition(): array
     {
         return [

@@ -6,17 +6,22 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
+use Illuminate\Support\Carbon;
 
 /**
  * @extends Factory<User>
  */
 class UserFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    #[\ReturnTypeWillChange]
+    #[\JetBrains\PhpStorm\ArrayShape([
+        'id' => "string",
+        'name' => "string",
+        'email' => "string",
+        'email_verified_at' => Carbon::class,
+        'password' => "string",
+        'remember_token' => "string"
+    ])]
     public function definition(): array
     {
         return [
