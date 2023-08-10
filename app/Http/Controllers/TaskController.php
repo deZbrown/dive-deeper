@@ -16,11 +16,6 @@ class TaskController extends Controller
         return response()->json($tasks);
     }
 
-    public function create()
-    {
-        //
-    }
-
     public function store(StoreTaskRequest $request): JsonResponse
     {
         $task = new Task($request->validated());
@@ -30,9 +25,9 @@ class TaskController extends Controller
         return response()->json($task, 201);
     }
 
-    public function show(Task $task)
+    public function show(Task $task): JsonResponse
     {
-        //
+        return response()->json($task);
     }
 
     public function edit(Task $task)

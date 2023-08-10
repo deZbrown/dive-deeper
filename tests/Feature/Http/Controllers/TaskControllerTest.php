@@ -42,7 +42,7 @@ class TaskControllerTest extends TestCase
         $user = User::factory()->create();
         $task = Task::factory()->create(['user_id' => $user->id]);
 
-        $response = $this->actingAs($user)->get('/tasks/' . $task->id);
+        $response = $this->actingAs($user)->get('/api/v1/tasks/' . $task->id);
 
         $response->assertStatus(200);
         $response->assertJson($task->toArray());
