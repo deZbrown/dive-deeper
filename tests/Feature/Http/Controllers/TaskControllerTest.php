@@ -17,7 +17,7 @@ class TaskControllerTest extends TestCase
         $user = User::factory()->create();
         Task::factory()->count(5)->create(['user_id' => $user->id]);
 
-        $response = $this->actingAs($user)->get('/tasks');
+        $response = $this->actingAs($user)->get('/api/v1/tasks');
 
         $response->assertStatus(200);
         $response->assertJsonCount(5);
@@ -29,10 +29,9 @@ class TaskControllerTest extends TestCase
         $taskData = [
             'title' => $this->faker->sentence,
             'description' => $this->faker->paragraph,
-            // Add other necessary fields
         ];
 
-        $response = $this->actingAs($user)->post('/tasks', $taskData);
+        $response = $this->actingAs($user)->post('/api/v1/tasks', $taskData);
 
         $response->assertStatus(201);
         $response->assertJson($taskData);
