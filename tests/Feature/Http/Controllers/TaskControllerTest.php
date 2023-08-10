@@ -4,6 +4,9 @@ namespace Tests\Feature\Http\Controllers;
 
 use App\Models\Task;
 use App\Models\User;
+use Database\Factories\ProjectFactory;
+use Database\Factories\PomodoroFactory;
+use Database\Factories\CalendarFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -52,23 +55,41 @@ class TaskControllerTest extends TestCase
     {
         $user = User::factory()->create();
         $task = Task::factory()->create(['user_id' => $user->id]);
+
+        $pomodoro = PomodoroFactory::new()->create();
+        $calendar = CalendarFactory::new()->create();
+        $project = ProjectFactory::new()->create();
+
         $updatedData = [
             'title' => 'Updated Title',
-            // Add other fields to update
+            'description' => 'Updated description text',
+            'is_completed' => true,
+            'pomodoro_id' => $pomodoro->id,
+            'calendar_id' => $calendar->id,
+            'project_id' => $project->id,
         ];
 
-        $response = $this->actingAs($user)->put('/tasks/' . $task->id, $updatedData);
+        $response = $this->actingAs($user)->put('/api/v1/tasks/' . $task->id, $updatedData);
 
         $response->assertStatus(200);
         $response->assertJson($updatedData);
+
+        $task->refresh();
+        $this->assertEquals($updatedData['title'], $task->title);
+        $this->assertEquals($updatedData['description'], $task->description);
+        $this->assertEquals($updatedData['is_completed'], $task->is_completed);
+        $this->assertEquals($updatedData['pomodoro_id'], $task->pomodoro_id);
+        $this->assertEquals($updatedData['calendar_id'], $task->calendar_id);
+        $this->assertEquals($updatedData['project_id'], $task->project_id);
     }
+
 
     public function test_can_delete_task(): void
     {
         $user = User::factory()->create();
         $task = Task::factory()->create(['user_id' => $user->id]);
 
-        $response = $this->actingAs($user)->delete('/tasks/' . $task->id);
+        $response = $this->actingAs($user)->delete('/api/v1/tasks/' . $task->id);
 
         $response->assertStatus(204);
         $this->assertDatabaseMissing('tasks', ['id' => $task->id]);

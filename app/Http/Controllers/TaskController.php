@@ -30,18 +30,22 @@ class TaskController extends Controller
         return response()->json($task);
     }
 
-    public function edit(Task $task)
+    public function update(UpdateTaskRequest $request, Task $task): JsonResponse
     {
-        //
+        $task->update($request->all());
+
+        return response()->json($task);
     }
 
-    public function update(UpdateTaskRequest $request, Task $task)
+    public function destroy(Task $task): JsonResponse
     {
-        //
+        if ($task->user_id !== auth()->id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $task->delete();
+
+        return response()->json(null, 204);
     }
 
-    public function destroy(Task $task)
-    {
-        //
-    }
 }
