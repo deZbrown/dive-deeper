@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,4 +18,13 @@ class Pomodoro extends Model
         'start_time',
         'end_time',
     ];
+
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::creating(static function ($model) {
+            $model->{$model->getKeyName()} = (string) Str::uuid();
+        });
+    }
 }
