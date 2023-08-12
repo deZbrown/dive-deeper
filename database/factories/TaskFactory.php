@@ -41,4 +41,11 @@ class TaskFactory extends Factory
             'project_id' => Project::factory(),
         ];
     }
+
+    public function withoutPomodoro(): Factory
+    {
+        return $this->state([
+            'pomodoro_id' => null,
+        ]);
+    }
 }

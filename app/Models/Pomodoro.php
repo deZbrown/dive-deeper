@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,10 +15,16 @@ class Pomodoro extends Model
     public $incrementing = false;
 
     protected $fillable = [
+        'task_id',
         'duration',
         'start_time',
         'end_time',
     ];
+
+    public function task(): BelongsTo
+    {
+        return $this->belongsTo(Task::class);
+    }
 
     protected static function boot(): void
     {

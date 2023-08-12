@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -29,9 +30,9 @@ class Task extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function pomodoro(): BelongsTo
+    public function pomodoro(): HasOne
     {
-        return $this->belongsTo(Pomodoro::class);
+        return $this->hasOne(Pomodoro::class);
     }
 
     public function calendar(): BelongsTo

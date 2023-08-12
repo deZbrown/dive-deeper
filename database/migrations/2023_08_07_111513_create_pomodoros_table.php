@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('pomodoros', static function (Blueprint $table) {
             $table->uuid('id')->primary();
 
+            $table->uuid('task_id');
             $table->unsignedInteger('duration');
             $table->timestamp('start_time')->nullable();
             $table->timestamp('end_time')->nullable();
