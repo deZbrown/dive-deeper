@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\PomodoroController;
+use App\Http\Controllers\CalendarController;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,4 +67,17 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::put('/projects/{project}', [ProjectController::class, 'update']);
 
     Route::delete('/projects/{project}', [ProjectController::class, 'destroy']);
+
+    /**
+     * Project routes
+     */
+    Route::get('/calendars', [CalendarController::class, 'index']);
+
+    Route::post('/calendars', [CalendarController::class, 'store']);
+
+    Route::get('/calendars/{calendar}', [CalendarController::class, 'show']);
+
+    Route::put('/calendars/{calendar}', [CalendarController::class, 'update']);
+
+    Route::delete('/calendars/{calendar}', [CalendarController::class, 'destroy']);
 });

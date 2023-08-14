@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('calendars', static function (Blueprint $table) {
             $table->uuid('id')->primary();
 
+            $table->uuid('user_id')->nullable();
             $table->date('date')->nullable();
             $table->time('time')->nullable();
 
