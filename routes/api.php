@@ -47,4 +47,9 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 
     Route::post('/pomodoros', [PomodoroController::class, 'store']);
 
+    Route::get('/pomodoros/{pomodoro}', [PomodoroController::class, 'show']);
+
+    Route::put('/pomodoros/{pomodoro}', [PomodoroController::class, 'update']);
+
+    Route::delete('/pomodoros/{pomodoro}', [PomodoroController::class, 'destroy']);
 });
