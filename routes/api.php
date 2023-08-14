@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\PomodoroController;
 
 /*
@@ -52,4 +53,17 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::put('/pomodoros/{pomodoro}', [PomodoroController::class, 'update']);
 
     Route::delete('/pomodoros/{pomodoro}', [PomodoroController::class, 'destroy']);
+
+    /**
+     * Project routes
+     */
+    Route::get('/projects', [ProjectController::class, 'index']);
+
+    Route::post('/projects', [ProjectController::class, 'store']);
+
+    Route::get('/projects/{project}', [ProjectController::class, 'show']);
+
+    Route::put('/projects/{project}', [ProjectController::class, 'update']);
+
+    Route::delete('/projects/{project}', [ProjectController::class, 'destroy']);
 });

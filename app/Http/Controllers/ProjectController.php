@@ -2,65 +2,59 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreProjectRequest;
+use Illuminate\Http\JsonResponse;
 use App\Http\Requests\UpdateProjectRequest;
+use App\Http\Requests\CreateProjectRequest;
 use App\Models\Project;
 
 class ProjectController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        $projects = Project::where('user_id', auth()->id())->get();
+
+        return response()->json($projects);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(CreateProjectRequest $request): JsonResponse
     {
-        //
+        $project = Project::create([
+            'name' => $request->input('name'),
+            'description' => $request->input('description'),
+            'user_id' => auth()->id(),
+        ]);
+
+        return response()->json($project, 201);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreProjectRequest $request)
+    public function show(Project $project): JsonResponse
     {
-        //
+        if ($project->user_id !== auth()->id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        return response()->json($project);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Project $project)
+    public function update(UpdateProjectRequest $request, Project $project): JsonResponse
     {
-        //
+        if ($project->user_id !== auth()->id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $project->update($request->validated());
+
+        return response()->json($project);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Project $project)
+    public function destroy(Project $project): JsonResponse
     {
-        //
-    }
+        if ($project->user_id !== auth()->id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateProjectRequest $request, Project $project)
-    {
-        //
-    }
+        $project->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Project $project)
-    {
-        //
+        return response()->json(null, 204);
     }
 }
