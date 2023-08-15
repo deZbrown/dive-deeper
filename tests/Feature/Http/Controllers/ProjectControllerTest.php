@@ -5,6 +5,7 @@ namespace Tests\Feature\Http\Controllers;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Project;
+use Laravel\Sanctum\Sanctum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ProjectControllerTest extends TestCase
@@ -74,4 +75,17 @@ class ProjectControllerTest extends TestCase
         $response->assertStatus(204);
         $this->assertDatabaseMissing('projects', ['id' => $project->id]);
     }
+
+    public function test_non_owner_cannot_access_project(): void
+    {
+        $user = User::factory()->create();
+        $project = Project::factory()->for(User::factory())->create();
+
+        Sanctum::actingAs($user);
+
+        $response = $this->getJson("/api/v1/projects/{$project->id}");
+
+        $response->assertStatus(403);
+    }
+
 }

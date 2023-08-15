@@ -11,9 +11,9 @@ return new class extends Migration
         Schema::create('projects', static function (Blueprint $table) {
             $table->uuid('id')->primary();
 
+            $table->uuid('user_id')->nullable();
             $table->string('name');
             $table->text('description')->nullable()->default(null);
-            $table->uuid('user_id')->nullable();
 
             $table->timestamps();
         });

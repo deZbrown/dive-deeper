@@ -54,9 +54,9 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
      */
     Route::get('/projects', [ProjectController::class, 'index']);
     Route::post('/projects', [ProjectController::class, 'store']);
-    Route::get('/projects/{project}', [ProjectController::class, 'show']);
-    Route::put('/projects/{project}', [ProjectController::class, 'update']);
-    Route::delete('/projects/{project}', [ProjectController::class, 'destroy']);
+    Route::get('/projects/{project}', [ProjectController::class, 'show'])->can('view', 'project');
+    Route::put('/projects/{project}', [ProjectController::class, 'update'])->can('update', 'project');
+    Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->can('delete', 'project');
 
     /**
      * Calendar routes
