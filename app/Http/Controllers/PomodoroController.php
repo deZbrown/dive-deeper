@@ -19,7 +19,10 @@ class PomodoroController extends Controller
 
     public function store(StorePomodoroRequest $request): JsonResponse
     {
-        $pomodoro = Pomodoro::create($request->validated());
+        $data = $request->validated();
+        $data['user_id'] = $request->user()->id;
+
+        $pomodoro = Pomodoro::create($data);
 
         return response()->json($pomodoro, 201);
     }

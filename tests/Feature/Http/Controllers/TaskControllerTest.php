@@ -19,26 +19,18 @@ class TaskControllerTest extends TestCase
 
     public function test_can_list_all_tasks(): void
     {
-        $user = User::factory()
-            ->has(Task::factory()
-                ->count(5)
-                ->has(Pomodoro::factory()
-                    ->count(1)
-                    ->forTask(function() {
-                        return Task::factory();
-                    })
-                )
-            )
-            ->create();
+        $user = User::factory()->create();
+        $tasks = Task::factory()->count(5)->create(['user_id' => $user->id]);
 
+        foreach ($tasks as $task) {
+            Pomodoro::factory()->count(1)->create(['task_id' => $task->id, 'user_id' => $user->id]);
+        }
 
         $response = $this->actingAs($user)->get('/api/v1/tasks');
 
         $response->assertStatus(200);
         $response->assertJsonCount(5);
     }
-
-
 
     public function test_can_create_new_task(): void
     {
@@ -70,9 +62,9 @@ class TaskControllerTest extends TestCase
         $user = User::factory()->create();
         $task = Task::factory()->create(['user_id' => $user->id]);
 
-        $pomodoro = PomodoroFactory::new()->create();
-        $calendar = CalendarFactory::new()->create();
-        $project = ProjectFactory::new()->create();
+        $pomodoro = PomodoroFactory::new()->create(['user_id' => $user->id]);
+        $calendar = CalendarFactory::new()->create(['user_id' => $user->id]);
+        $project = ProjectFactory::new()->create(['user_id' => $user->id]);
 
         $updatedData = [
             'title' => 'Updated Title',

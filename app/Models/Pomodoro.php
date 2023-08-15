@@ -16,6 +16,7 @@ class Pomodoro extends Model
 
     protected $fillable = [
         'task_id',
+        'user_id',
         'duration',
         'start_time',
         'end_time',
