@@ -35,12 +35,17 @@ class User extends Authenticatable
 
     public function calendars(): HasMany
     {
-        return $this->hasMany(Calendar::class, 'user_id');
+        return $this->hasMany(Calendar::class);
+    }
+
+    public function pomodoros(): HasMany
+    {
+        return $this->hasMany(Pomodoro::class);
     }
 
     public function tasks(): HasMany
     {
-        return $this->hasMany(Task::class, 'user_id');
+        return $this->hasMany(Task::class);
     }
 
     protected static function boot(): void

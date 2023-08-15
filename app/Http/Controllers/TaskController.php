@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Project;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
@@ -11,14 +12,16 @@ class TaskController extends Controller
 {
     public function index(): JsonResponse
     {
-        $tasks = Task::where('user_id', auth()->id())->get();
+        $tasks = auth()->user()->tasks;
 
         return response()->json($tasks);
     }
 
+
     public function store(StoreTaskRequest $request): JsonResponse
     {
         $task = new Task($request->validated());
+
         $task->user_id = auth()->id();
         $task->save();
 
@@ -39,13 +42,24 @@ class TaskController extends Controller
 
     public function destroy(Task $task): JsonResponse
     {
-        if ($task->user_id !== auth()->id()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
         $task->delete();
 
         return response()->json(null, 204);
     }
 
+    public function addTaskToProject(Task $task, Project $project): JsonResponse
+    {
+        $task->project_id = $project->id;
+        $task->save();
+
+        return response()->json($task);
+    }
+
+    public function removeTaskFromProject(Task $task): JsonResponse
+    {
+        $task->project_id = null;
+        $task->save();
+
+        return response()->json($task);
+    }
 }

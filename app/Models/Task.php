@@ -25,6 +25,11 @@ class Task extends Model
         'project_id',
     ];
 
+    public function isOwner($user): bool
+    {
+        return $this->user_id === $user->id;
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

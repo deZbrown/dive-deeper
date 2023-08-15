@@ -4,6 +4,7 @@ namespace Tests\Feature\Http\Controllers;
 
 use App\Models\Task;
 use App\Models\User;
+use App\Models\Project;
 use App\Models\Pomodoro;
 use Database\Factories\ProjectFactory;
 use Database\Factories\PomodoroFactory;
@@ -107,4 +108,42 @@ class TaskControllerTest extends TestCase
         $response->assertStatus(204);
         $this->assertDatabaseMissing('tasks', ['id' => $task->id]);
     }
+
+    public function test_can_add_existing_task_to_existing_project(): void
+    {
+        $user = User::factory()->create();
+        $task = Task::factory()->create(['user_id' => $user->id]);
+        $project = Project::factory()->create(['user_id' => $user->id]);
+
+        $response = $this->actingAs($user)->post("/api/v1/tasks/{$task->id}/projects/{$project->id}");
+
+        $response->assertStatus(200);
+
+        $this->assertEquals($project->id, $task->fresh()->project_id);
+    }
+
+    public function test_can_remove_task_from_project(): void
+    {
+        $user = User::factory()->create();
+        $project = Project::factory()->create(['user_id' => $user->id]);
+        $task = Task::factory()->create(['user_id' => $user->id, 'project_id' => $project->id]);
+
+        $response = $this->actingAs($user)->delete("/api/v1/tasks/{$task->id}/projects");
+
+        $response->assertStatus(200);
+
+        $this->assertNull($task->fresh()->project_id);
+    }
+
+    public function test_non_owner_cannot_access_task(): void
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+        $task = Task::factory()->create(['user_id' => $otherUser->id]);
+
+        $this->actingAs($user)
+            ->getJson('/api/v1/tasks/' . $task->id)
+            ->assertStatus(403); // Unauthorized
+    }
+
 }

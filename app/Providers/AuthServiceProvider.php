@@ -2,6 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\Task;
+use App\Models\Pomodoro;
+use App\Models\Calendar;
+use App\Policies\TaskPolicy;
+use App\Policies\PomodoroPolicy;
+use App\Policies\CalendarPolicy;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
@@ -13,7 +19,9 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        // 'App\Models\Model' => 'App\Policies\ModelPolicy',
+        Task::class => TaskPolicy::class,
+        Pomodoro::class => PomodoroPolicy::class,
+        Calendar::class => CalendarPolicy::class,
     ];
 
     /**

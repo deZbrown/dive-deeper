@@ -29,19 +29,11 @@ class ProjectController extends Controller
 
     public function show(Project $project): JsonResponse
     {
-        if ($project->user_id !== auth()->id()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
         return response()->json($project);
     }
 
     public function update(UpdateProjectRequest $request, Project $project): JsonResponse
     {
-        if ($project->user_id !== auth()->id()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
         $project->update($request->validated());
 
         return response()->json($project);
@@ -49,10 +41,6 @@ class ProjectController extends Controller
 
     public function destroy(Project $project): JsonResponse
     {
-        if ($project->user_id !== auth()->id()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
         $project->delete();
 
         return response()->json(null, 204);

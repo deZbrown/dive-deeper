@@ -41,7 +41,7 @@ class CalendarControllerTest extends TestCase
     public function test_can_show_calendar(): void
     {
         $user = User::factory()->create();
-        $calendar = Calendar::factory()->create();
+        $calendar = Calendar::factory()->create(['user_id' => $user->id]);
 
         $response = $this->actingAs($user)->get('/api/v1/calendars/' . $calendar->id);
 
@@ -50,10 +50,11 @@ class CalendarControllerTest extends TestCase
     }
 
 
+
     public function test_can_update_calendar(): void
     {
         $user = User::factory()->create();
-        $calendar = Calendar::factory()->create();
+        $calendar = Calendar::factory()->create(['user_id' => $user->id]);
 
         $updatedData = [
             'date' => '2022-09-01',
@@ -74,6 +75,54 @@ class CalendarControllerTest extends TestCase
 
         $response->assertStatus(204);
         $this->assertDatabaseMissing('calendars', ['id' => $calendar->id]);
+    }
+
+    public function testCanViewOwnCalendar(): void
+    {
+        $user = User::factory()->create();
+        $calendar = Calendar::factory()->create(['user_id' => $user->id]);
+
+        $this->actingAs($user)
+            ->getJson("/api/v1/calendars/{$calendar->id}")
+            ->assertStatus(200)
+            ->assertJson(['id' => $calendar->id]);
+    }
+
+    public function testCannotViewOthersCalendar(): void
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+        $calendar = Calendar::factory()->create(['user_id' => $otherUser->id]);
+
+        $this->actingAs($user)
+            ->getJson("/api/v1/calendars/{$calendar->id}")
+            ->assertStatus(403);
+    }
+
+    public function testCanUpdateOwnCalendar(): void
+    {
+        $user = User::factory()->create();
+        $calendar = Calendar::factory()->create(['user_id' => $user->id]);
+
+        $updateData = [
+            'name' => 'Updated Name',
+            'date' => '2023-08-15'
+        ];
+
+        $this->actingAs($user)
+            ->putJson("/api/v1/calendars/{$calendar->id}", $updateData)
+            ->assertStatus(200);
+    }
+
+
+    public function testCanDeleteOwnCalendar(): void
+    {
+        $user = User::factory()->create();
+        $calendar = Calendar::factory()->create(['user_id' => $user->id]);
+
+        $this->actingAs($user)
+            ->deleteJson("/api/v1/calendars/{$calendar->id}")
+            ->assertStatus(204);
     }
 
 }

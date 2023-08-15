@@ -38,10 +38,6 @@ class PomodoroController extends Controller
 
     public function destroy(Pomodoro $pomodoro): JsonResponse
     {
-        if ($pomodoro->task->user_id !== auth()->id()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
         $pomodoro->delete();
 
         return response()->json(null, 204);
@@ -49,11 +45,6 @@ class PomodoroController extends Controller
 
     public function startPomodoroTimer(Pomodoro $pomodoro): JsonResponse
     {
-        $task = $pomodoro->task;
-        if ($task->user_id !== auth()->id()) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
-
         $pomodoro->start();
 
         return response()->json($pomodoro->refresh());
@@ -61,11 +52,6 @@ class PomodoroController extends Controller
 
     public function stopPomodoroTimer(Pomodoro $pomodoro): JsonResponse
     {
-        $task = $pomodoro->task;
-        if ($task->user_id !== auth()->id()) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
-
         $pomodoro->stop();
 
         return response()->json($pomodoro->refresh());

@@ -18,6 +18,11 @@ class Calendar extends Model
         'date',
     ];
 
+    public function isOwner($user): bool
+    {
+        return $this->user_id === $user->id;
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

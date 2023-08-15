@@ -116,4 +116,21 @@ class PomodoroControllerTest extends TestCase
         $this->assertNotNull($pomodoro->fresh()->end_time);
     }
 
+    public function test_non_owner_cannot_access_pomodoro()
+    {
+        // Create a user and a pomodoro
+        $user = User::factory()->create();
+        $anotherUser = User::factory()->create();
+        $pomodoro = Pomodoro::factory()->create(['user_id' => $user->id]);
+
+        // Act as another user
+        $this->actingAs($anotherUser);
+
+        // Try to access the pomodoro
+        $response = $this->get("/api/v1/pomodoros/{$pomodoro->id}");
+
+        // Assert forbidden
+        $response->assertStatus(403);
+    }
+
 }
