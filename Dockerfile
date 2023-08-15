@@ -40,10 +40,6 @@ RUN if grep -Fq "laravel/octane" /var/www/html/composer.json; then \
         ln -sf /etc/nginx/sites-available/default-octane /etc/nginx/sites-enabled/default; \
     fi
 
-RUN rsync -ar /var/www/html/public-npm/ /var/www/html/public/ \
-    && rm -rf /var/www/html/public-npm \
-    && chown -R www-data:www-data /var/www/html/public
-
 EXPOSE 8080
 
 ENTRYPOINT ["/entrypoint"]
