@@ -47,4 +47,28 @@ class PomodoroController extends Controller
         return response()->json(null, 204);
     }
 
+    public function startPomodoroTimer(Pomodoro $pomodoro): JsonResponse
+    {
+        $task = $pomodoro->task;
+        if ($task->user_id !== auth()->id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $pomodoro->start();
+
+        return response()->json($pomodoro->refresh());
+    }
+
+    public function stopPomodoroTimer(Pomodoro $pomodoro): JsonResponse
+    {
+        $task = $pomodoro->task;
+        if ($task->user_id !== auth()->id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $pomodoro->stop();
+
+        return response()->json($pomodoro->refresh());
+    }
+
 }

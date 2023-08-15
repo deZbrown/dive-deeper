@@ -33,12 +33,4 @@ class PomodoroFactory extends Factory
         ];
     }
 
-    public function forTask($task): Factory
-    {
-        return $this->state(function (array $attributes) use ($task) {
-            return [
-                'task_id' => $task->id,
-            ];
-        });
-    }
 }

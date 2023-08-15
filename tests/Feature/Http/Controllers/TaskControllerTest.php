@@ -4,6 +4,7 @@ namespace Tests\Feature\Http\Controllers;
 
 use App\Models\Task;
 use App\Models\User;
+use App\Models\Pomodoro;
 use Database\Factories\ProjectFactory;
 use Database\Factories\PomodoroFactory;
 use Database\Factories\CalendarFactory;
@@ -17,14 +18,26 @@ class TaskControllerTest extends TestCase
 
     public function test_can_list_all_tasks(): void
     {
-        $user = User::factory()->create();
-        Task::factory()->count(5)->create(['user_id' => $user->id]);
+        $user = User::factory()
+            ->has(Task::factory()
+                ->count(5)
+                ->has(Pomodoro::factory()
+                    ->count(1)
+                    ->forTask(function() {
+                        return Task::factory();
+                    })
+                )
+            )
+            ->create();
+
 
         $response = $this->actingAs($user)->get('/api/v1/tasks');
 
         $response->assertStatus(200);
         $response->assertJsonCount(5);
     }
+
+
 
     public function test_can_create_new_task(): void
     {
@@ -93,27 +106,5 @@ class TaskControllerTest extends TestCase
 
         $response->assertStatus(204);
         $this->assertDatabaseMissing('tasks', ['id' => $task->id]);
-    }
-
-    public function test_can_start_pomodoro_timer(): void
-    {
-        $user = User::factory()->create();
-        $task = Task::factory()->create(['user_id' => $user->id]);
-
-        $response = $this->actingAs($user)->post('/tasks/' . $task->id . '/start');
-
-        $response->assertStatus(200);
-        // Add assertions to verify the Pomodoro timer has started
-    }
-
-    public function test_can_stop_pomodoro_timer(): void
-    {
-        $user = User::factory()->create();
-        $task = Task::factory()->create(['user_id' => $user->id]);
-
-        $response = $this->actingAs($user)->post('/tasks/' . $task->id . '/stop');
-
-        $response->assertStatus(200);
-        // Add assertions to verify the Pomodoro timer has stopped
     }
 }

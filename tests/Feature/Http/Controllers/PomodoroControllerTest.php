@@ -15,8 +15,8 @@ class PomodoroControllerTest extends TestCase
     public function test_can_list_all_pomodoros(): void
     {
         $user = User::factory()->create();
-        $task = Task::factory()->withoutPomodoro()->create(['user_id' => $user->id]);
-        Pomodoro::factory()->forTask($task)->create();
+        $task = Task::factory()->create(['user_id' => $user->id]);
+        $pomodoro = Pomodoro::factory()->create(['task_id' => $task->id]);
 
         $response = $this->actingAs($user)->get('/api/v1/pomodoros');
 
@@ -27,7 +27,7 @@ class PomodoroControllerTest extends TestCase
     public function test_can_create_pomodoro(): void
     {
         $user = User::factory()->create();
-        $task = Task::factory()->withoutPomodoro()->create(['user_id' => $user->id]);
+        $task = Task::factory()->create(['user_id' => $user->id]);
 
         $pomodoroData = [
             'task_id' => $task->id,
@@ -43,8 +43,8 @@ class PomodoroControllerTest extends TestCase
     public function test_can_show_pomodoro(): void
     {
         $user = User::factory()->create();
-        $task = Task::factory()->withoutPomodoro()->create(['user_id' => $user->id]);
-        $pomodoro = Pomodoro::factory()->forTask($task)->create();
+        $task = Task::factory()->create(['user_id' => $user->id]);
+        $pomodoro = Pomodoro::factory()->create(['task_id' => $task->id]);
 
         $response = $this->actingAs($user)->get('/api/v1/pomodoros/' . $pomodoro->id);
 
@@ -58,8 +58,8 @@ class PomodoroControllerTest extends TestCase
     public function test_can_update_pomodoro(): void
     {
         $user = User::factory()->create();
-        $task = Task::factory()->withoutPomodoro()->create(['user_id' => $user->id]);
-        $pomodoro = Pomodoro::factory()->forTask($task)->create();
+        $task = Task::factory()->create(['user_id' => $user->id]);
+        $pomodoro = Pomodoro::factory()->create(['task_id' => $task->id]);
 
         $updatedData = [
             'duration' => 450,
@@ -76,8 +76,8 @@ class PomodoroControllerTest extends TestCase
     public function test_can_delete_pomodoro(): void
     {
         $user = User::factory()->create();
-        $task = Task::factory()->withoutPomodoro()->create(['user_id' => $user->id]);
-        $pomodoro = Pomodoro::factory()->forTask($task)->create();
+        $task = Task::factory()->create(['user_id' => $user->id]);
+        $pomodoro = Pomodoro::factory()->create(['task_id' => $task->id]);
 
         $response = $this->actingAs($user)->delete('/api/v1/pomodoros/' . $pomodoro->id);
 
@@ -85,5 +85,35 @@ class PomodoroControllerTest extends TestCase
         $this->assertDatabaseMissing('pomodoros', ['id' => $pomodoro->id]);
     }
 
+    public function test_can_start_pomodoro_timer(): void
+    {
+        $user = User::factory()->create();
+        $task = Task::factory()->create(['user_id' => $user->id]);
+        $pomodoro = Pomodoro::factory()->create(['task_id' => $task->id]);
+
+        $response = $this->actingAs($user)->post('/api/v1/pomodoros/' . $pomodoro->id . '/start');
+
+        $response->assertStatus(200);
+
+        $response->assertJsonStructure(['start_time']);
+        $this->assertNotNull($pomodoro->fresh()->start_time);
+    }
+
+    public function test_can_stop_pomodoro_timer(): void
+    {
+        $user = User::factory()->create();
+        $task = Task::factory()->create(['user_id' => $user->id]);
+        $pomodoro = Pomodoro::factory()->create([
+            'task_id' => $task->id,
+            'start_time' => now(),
+        ]);
+
+        $response = $this->actingAs($user)->post('/api/v1/pomodoros/' . $pomodoro->id . '/stop');
+
+        $response->assertStatus(200);
+
+        $response->assertJsonStructure(['end_time']);
+        $this->assertNotNull($pomodoro->fresh()->end_time);
+    }
 
 }

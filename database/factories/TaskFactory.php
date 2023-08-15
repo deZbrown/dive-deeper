@@ -24,7 +24,6 @@ class TaskFactory extends Factory
         'title' => "string",
         'description' => "string",
         'is_completed' => "bool",
-        'pomodoro_id' => Pomodoro::class,
         'calendar_id' => Calendar::class,
         'project_id' => Project::class
     ])]
@@ -36,16 +35,8 @@ class TaskFactory extends Factory
             'title' => $this->faker->sentence,
             'description' => $this->faker->paragraph,
             'is_completed' => $this->faker->boolean,
-            'pomodoro_id' => Pomodoro::factory(),
             'calendar_id' => Calendar::factory(),
             'project_id' => Project::factory(),
         ];
-    }
-
-    public function withoutPomodoro(): Factory
-    {
-        return $this->state([
-            'pomodoro_id' => null,
-        ]);
     }
 }

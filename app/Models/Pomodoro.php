@@ -26,6 +26,20 @@ class Pomodoro extends Model
         return $this->belongsTo(Task::class);
     }
 
+    public function start(): void
+    {
+        $this->start_time = now();
+
+        $this->save();
+    }
+
+    public function stop(): void
+    {
+        $this->end_time = now();
+
+        $this->save();
+    }
+
     protected static function boot(): void
     {
         parent::boot();

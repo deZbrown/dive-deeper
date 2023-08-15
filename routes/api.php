@@ -21,7 +21,7 @@ use App\Http\Controllers\CalendarController;
 Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 
     /**
-     * User
+     * User routes
      */
 
     Route::get('/user', static function (Request $request) {
@@ -29,7 +29,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     });
 
     /**
-     * Tasks
+     * Tasks routes
      */
 
     Route::get('/tasks', [TaskController::class, 'index']);
@@ -43,7 +43,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::delete('/tasks/{task}', [TaskController::class, 'destroy']);
 
     /**
-     * Pomodoros
+     * Pomodoro routes
      */
     Route::get('/pomodoros', [PomodoroController::class, 'index']);
 
@@ -54,6 +54,10 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::put('/pomodoros/{pomodoro}', [PomodoroController::class, 'update']);
 
     Route::delete('/pomodoros/{pomodoro}', [PomodoroController::class, 'destroy']);
+
+    Route::post('/pomodoros/{pomodoro}/start', [PomodoroController::class, 'startPomodoroTimer']);
+
+    Route::post('/pomodoros/{pomodoro}/stop', [PomodoroController::class, 'stopPomodoroTimer']);
 
     /**
      * Project routes
@@ -69,7 +73,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::delete('/projects/{project}', [ProjectController::class, 'destroy']);
 
     /**
-     * Project routes
+     * Calendar routes
      */
     Route::get('/calendars', [CalendarController::class, 'index']);
 
