@@ -2,12 +2,12 @@
 
 namespace App\Providers;
 
-use App\Models\Task;
-use App\Models\Pomodoro;
 use App\Models\Calendar;
-use App\Policies\TaskPolicy;
-use App\Policies\PomodoroPolicy;
+use App\Models\Pomodoro;
+use App\Models\Task;
 use App\Policies\CalendarPolicy;
+use App\Policies\PomodoroPolicy;
+use App\Policies\TaskPolicy;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 

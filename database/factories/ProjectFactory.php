@@ -2,10 +2,10 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
 use App\Models\Project;
-use Illuminate\Support\Str;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends Factory<Project>
@@ -16,10 +16,10 @@ class ProjectFactory extends Factory
 
     #[\ReturnTypeWillChange]
     #[\JetBrains\PhpStorm\ArrayShape([
-        'id' => "string",
-        'name' => "string",
-        'description' => "string|null",
-        'user_id' => Factory::class
+        'id' => 'string',
+        'name' => 'string',
+        'description' => 'string|null',
+        'user_id' => Factory::class,
     ])]
     public function definition(): array
     {

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\JsonResponse;
-use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Requests\CreateProjectRequest;
+use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
+use Illuminate\Http\JsonResponse;
 
 class ProjectController extends Controller
 {

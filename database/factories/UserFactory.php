@@ -3,10 +3,10 @@
 namespace Database\Factories;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 /**
  * @extends Factory<User>
@@ -15,12 +15,12 @@ class UserFactory extends Factory
 {
     #[\ReturnTypeWillChange]
     #[\JetBrains\PhpStorm\ArrayShape([
-        'id' => "string",
-        'name' => "string",
-        'email' => "string",
+        'id' => 'string',
+        'name' => 'string',
+        'email' => 'string',
         'email_verified_at' => Carbon::class,
-        'password' => "string",
-        'remember_token' => "string"
+        'password' => 'string',
+        'remember_token' => 'string',
     ])]
     public function definition(): array
     {

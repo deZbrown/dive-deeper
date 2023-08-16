@@ -2,13 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Models\Calendar;
+use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
-use App\Models\Project;
-use App\Models\Pomodoro;
-use App\Models\Calendar;
-use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends Factory<Task>
@@ -19,13 +18,13 @@ class TaskFactory extends Factory
 
     #[\ReturnTypeWillChange]
     #[\JetBrains\PhpStorm\ArrayShape([
-        'id' => "string",
+        'id' => 'string',
         'user_id' => User::class,
-        'title' => "string",
-        'description' => "string",
-        'is_completed' => "bool",
+        'title' => 'string',
+        'description' => 'string',
+        'is_completed' => 'bool',
         'calendar_id' => Calendar::class,
-        'project_id' => Project::class
+        'project_id' => Project::class,
     ])]
     public function definition(): array
     {

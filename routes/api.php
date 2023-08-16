@@ -1,11 +1,11 @@
 <?php
 
+use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\PomodoroController;
+use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\TaskController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TaskController;
-use App\Http\Controllers\ProjectController;
-use App\Http\Controllers\PomodoroController;
-use App\Http\Controllers\CalendarController;
 
 /*
 |--------------------------------------------------------------------------

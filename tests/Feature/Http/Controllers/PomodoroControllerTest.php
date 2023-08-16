@@ -2,11 +2,11 @@
 
 namespace Tests\Feature\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Task;
 use App\Models\Pomodoro;
-use Tests\TestCase;
+use App\Models\Task;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class PomodoroControllerTest extends TestCase
 {
@@ -24,7 +24,6 @@ class PomodoroControllerTest extends TestCase
         $response->assertJsonCount(1);
     }
 
-
     public function test_can_create_pomodoro(): void
     {
         $user = User::factory()->create();
@@ -41,14 +40,13 @@ class PomodoroControllerTest extends TestCase
         $response->assertJsonFragment($pomodoroData);
     }
 
-
     public function test_can_show_pomodoro(): void
     {
         $user = User::factory()->create();
         $task = Task::factory()->create(['user_id' => $user->id]);
-        $pomodoro = Pomodoro::factory()->create(['task_id' => $task->id, 'user_id' => $user->id,]);
+        $pomodoro = Pomodoro::factory()->create(['task_id' => $task->id, 'user_id' => $user->id]);
 
-        $response = $this->actingAs($user)->get('/api/v1/pomodoros/' . $pomodoro->id);
+        $response = $this->actingAs($user)->get('/api/v1/pomodoros/'.$pomodoro->id);
 
         $response->assertStatus(200);
         $response->assertJsonFragment([
@@ -61,7 +59,7 @@ class PomodoroControllerTest extends TestCase
     {
         $user = User::factory()->create();
         $task = Task::factory()->create(['user_id' => $user->id]);
-        $pomodoro = Pomodoro::factory()->create(['task_id' => $task->id, 'user_id' => $user->id,]);
+        $pomodoro = Pomodoro::factory()->create(['task_id' => $task->id, 'user_id' => $user->id]);
 
         $updatedData = [
             'duration' => 450,
@@ -69,7 +67,7 @@ class PomodoroControllerTest extends TestCase
             'end_time' => '2023-08-15 12:30:00',
         ];
 
-        $response = $this->actingAs($user)->put('/api/v1/pomodoros/' . $pomodoro->id, $updatedData);
+        $response = $this->actingAs($user)->put('/api/v1/pomodoros/'.$pomodoro->id, $updatedData);
 
         $response->assertStatus(200);
         $response->assertJsonFragment($updatedData);
@@ -79,9 +77,9 @@ class PomodoroControllerTest extends TestCase
     {
         $user = User::factory()->create();
         $task = Task::factory()->create(['user_id' => $user->id]);
-        $pomodoro = Pomodoro::factory()->create(['task_id' => $task->id, 'user_id' => $user->id,]);
+        $pomodoro = Pomodoro::factory()->create(['task_id' => $task->id, 'user_id' => $user->id]);
 
-        $response = $this->actingAs($user)->delete('/api/v1/pomodoros/' . $pomodoro->id);
+        $response = $this->actingAs($user)->delete('/api/v1/pomodoros/'.$pomodoro->id);
 
         $response->assertStatus(204);
         $this->assertDatabaseMissing('pomodoros', ['id' => $pomodoro->id]);
@@ -91,9 +89,9 @@ class PomodoroControllerTest extends TestCase
     {
         $user = User::factory()->create();
         $task = Task::factory()->create(['user_id' => $user->id]);
-        $pomodoro = Pomodoro::factory()->create(['task_id' => $task->id, 'user_id' => $user->id,]);
+        $pomodoro = Pomodoro::factory()->create(['task_id' => $task->id, 'user_id' => $user->id]);
 
-        $response = $this->actingAs($user)->post('/api/v1/pomodoros/' . $pomodoro->id . '/start');
+        $response = $this->actingAs($user)->post('/api/v1/pomodoros/'.$pomodoro->id.'/start');
 
         $response->assertStatus(200);
 
@@ -111,7 +109,7 @@ class PomodoroControllerTest extends TestCase
             'start_time' => now(),
         ]);
 
-        $response = $this->actingAs($user)->post('/api/v1/pomodoros/' . $pomodoro->id . '/stop');
+        $response = $this->actingAs($user)->post('/api/v1/pomodoros/'.$pomodoro->id.'/stop');
 
         $response->assertStatus(200);
 
@@ -131,5 +129,4 @@ class PomodoroControllerTest extends TestCase
 
         $response->assertStatus(403);
     }
-
 }

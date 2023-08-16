@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePomodoroRequest;
+use App\Http\Requests\UpdatePomodoroRequest;
 use App\Models\Pomodoro;
 use Illuminate\Http\JsonResponse;
-use App\Http\Requests\StorePomodoroRequest;
-use App\Http\Requests\FetchPomodoroRequest;
-use App\Http\Requests\UpdatePomodoroRequest;
 
 class PomodoroController extends Controller
 {
@@ -59,5 +58,4 @@ class PomodoroController extends Controller
 
         return response()->json($pomodoro->refresh());
     }
-
 }

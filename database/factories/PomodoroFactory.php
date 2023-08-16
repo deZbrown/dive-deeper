@@ -2,10 +2,10 @@
 
 namespace Database\Factories;
 
-use App\Models\Task;
 use App\Models\Pomodoro;
-use Illuminate\Support\Str;
+use App\Models\Task;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends Factory<Pomodoro>
@@ -16,11 +16,11 @@ class PomodoroFactory extends Factory
 
     #[\ReturnTypeWillChange]
     #[\JetBrains\PhpStorm\ArrayShape([
-        'id' => "string",
+        'id' => 'string',
         'task_id' => Task::class,
-        'duration' => "int",
+        'duration' => 'int',
         'start_time' => \DateTimeInterface::class,
-        'end_time' => \DateTimeInterface::class
+        'end_time' => \DateTimeInterface::class,
     ])]
     public function definition(): array
     {
@@ -32,5 +32,4 @@ class PomodoroFactory extends Factory
             'end_time' => $this->faker->dateTime,
         ];
     }
-
 }

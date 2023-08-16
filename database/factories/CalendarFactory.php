@@ -2,10 +2,10 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
 use App\Models\Calendar;
-use Illuminate\Support\Str;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 class CalendarFactory extends Factory
 {
@@ -13,9 +13,9 @@ class CalendarFactory extends Factory
 
     #[\ReturnTypeWillChange]
     #[\JetBrains\PhpStorm\ArrayShape([
-        'id' => "string",
-        'user_id' => "string",
-        'date' => "string"
+        'id' => 'string',
+        'user_id' => 'string',
+        'date' => 'string',
     ])]
     public function definition(): array
     {

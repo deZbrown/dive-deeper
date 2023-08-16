@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Calendar;
-use Illuminate\Http\JsonResponse;
 use App\Http\Requests\CreateCalendarRequest;
 use App\Http\Requests\UpdateCalendarRequest;
+use App\Models\Calendar;
+use Illuminate\Http\JsonResponse;
 
 class CalendarController extends Controller
 {
@@ -43,5 +43,4 @@ class CalendarController extends Controller
 
         return response()->json(null, 204);
     }
-
 }

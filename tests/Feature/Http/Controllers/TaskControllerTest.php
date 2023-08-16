@@ -2,13 +2,13 @@
 
 namespace Tests\Feature\Http\Controllers;
 
+use App\Models\Pomodoro;
+use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
-use App\Models\Project;
-use App\Models\Pomodoro;
-use Database\Factories\ProjectFactory;
-use Database\Factories\PomodoroFactory;
 use Database\Factories\CalendarFactory;
+use Database\Factories\PomodoroFactory;
+use Database\Factories\ProjectFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -51,7 +51,7 @@ class TaskControllerTest extends TestCase
         $user = User::factory()->create();
         $task = Task::factory()->create(['user_id' => $user->id]);
 
-        $response = $this->actingAs($user)->get('/api/v1/tasks/' . $task->id);
+        $response = $this->actingAs($user)->get('/api/v1/tasks/'.$task->id);
 
         $response->assertStatus(200);
         $response->assertJson($task->toArray());
@@ -75,7 +75,7 @@ class TaskControllerTest extends TestCase
             'project_id' => $project->id,
         ];
 
-        $response = $this->actingAs($user)->put('/api/v1/tasks/' . $task->id, $updatedData);
+        $response = $this->actingAs($user)->put('/api/v1/tasks/'.$task->id, $updatedData);
 
         $response->assertStatus(200);
         $response->assertJson($updatedData);
@@ -89,13 +89,12 @@ class TaskControllerTest extends TestCase
         $this->assertEquals($updatedData['project_id'], $task->project_id);
     }
 
-
     public function test_can_delete_task(): void
     {
         $user = User::factory()->create();
         $task = Task::factory()->create(['user_id' => $user->id]);
 
-        $response = $this->actingAs($user)->delete('/api/v1/tasks/' . $task->id);
+        $response = $this->actingAs($user)->delete('/api/v1/tasks/'.$task->id);
 
         $response->assertStatus(204);
         $this->assertDatabaseMissing('tasks', ['id' => $task->id]);
@@ -134,8 +133,7 @@ class TaskControllerTest extends TestCase
         $task = Task::factory()->create(['user_id' => $otherUser->id]);
 
         $this->actingAs($user)
-            ->getJson('/api/v1/tasks/' . $task->id)
+            ->getJson('/api/v1/tasks/'.$task->id)
             ->assertStatus(403); // Unauthorized
     }
-
 }

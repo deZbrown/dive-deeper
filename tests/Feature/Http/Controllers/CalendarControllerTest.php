@@ -2,10 +2,10 @@
 
 namespace Tests\Feature\Http\Controllers;
 
-use Tests\TestCase;
-use App\Models\User;
 use App\Models\Calendar;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class CalendarControllerTest extends TestCase
 {
@@ -22,7 +22,6 @@ class CalendarControllerTest extends TestCase
         $response->assertJsonCount(1);
     }
 
-
     public function test_can_create_calendar(): void
     {
         $user = User::factory()->create();
@@ -37,19 +36,16 @@ class CalendarControllerTest extends TestCase
         $response->assertJsonFragment($calendarData);
     }
 
-
     public function test_can_show_calendar(): void
     {
         $user = User::factory()->create();
         $calendar = Calendar::factory()->create(['user_id' => $user->id]);
 
-        $response = $this->actingAs($user)->get('/api/v1/calendars/' . $calendar->id);
+        $response = $this->actingAs($user)->get('/api/v1/calendars/'.$calendar->id);
 
         $response->assertStatus(200);
         $response->assertJsonFragment($calendar->toArray());
     }
-
-
 
     public function test_can_update_calendar(): void
     {
@@ -60,7 +56,7 @@ class CalendarControllerTest extends TestCase
             'date' => '2022-09-01',
         ];
 
-        $response = $this->actingAs($user)->put('/api/v1/calendars/' . $calendar->id, $updatedData);
+        $response = $this->actingAs($user)->put('/api/v1/calendars/'.$calendar->id, $updatedData);
 
         $response->assertStatus(200);
         $response->assertJsonFragment($updatedData);
@@ -71,7 +67,7 @@ class CalendarControllerTest extends TestCase
         $user = User::factory()->create();
         $calendar = Calendar::factory()->create(['user_id' => $user->id]);
 
-        $response = $this->actingAs($user)->delete('/api/v1/calendars/' . $calendar->id);
+        $response = $this->actingAs($user)->delete('/api/v1/calendars/'.$calendar->id);
 
         $response->assertStatus(204);
         $this->assertDatabaseMissing('calendars', ['id' => $calendar->id]);
@@ -106,14 +102,13 @@ class CalendarControllerTest extends TestCase
 
         $updateData = [
             'name' => 'Updated Name',
-            'date' => '2023-08-15'
+            'date' => '2023-08-15',
         ];
 
         $this->actingAs($user)
             ->putJson("/api/v1/calendars/{$calendar->id}", $updateData)
             ->assertStatus(200);
     }
-
 
     public function testCanDeleteOwnCalendar(): void
     {
@@ -124,5 +119,4 @@ class CalendarControllerTest extends TestCase
             ->deleteJson("/api/v1/calendars/{$calendar->id}")
             ->assertStatus(204);
     }
-
 }

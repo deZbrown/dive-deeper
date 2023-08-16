@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Project;
-use Illuminate\Http\JsonResponse;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
+use App\Models\Project;
 use App\Models\Task;
+use Illuminate\Http\JsonResponse;
 
 class TaskController extends Controller
 {
@@ -16,7 +16,6 @@ class TaskController extends Controller
 
         return response()->json($tasks);
     }
-
 
     public function store(StoreTaskRequest $request): JsonResponse
     {
