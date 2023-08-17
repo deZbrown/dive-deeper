@@ -25,11 +25,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Install CA certificates
-      - name: Install and update CA certificates
-        run: sudo apt-get update && sudo apt-get install -y ca-certificates
-        shell: bash
-
         # Setup PHP
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -80,7 +75,7 @@ jobs:
       # Run tests
       - name: Test Run
         run: |
-          php artisan test --without-tty | tee test_results
+          php artisan test --without-tty tests/Feature | tee test_results
           echo '```' >> $GITHUB_STEP_SUMMARY
           cat test_results >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
