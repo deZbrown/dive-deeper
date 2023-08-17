@@ -86,7 +86,22 @@ jobs:
           echo '```' >> $GITHUB_STEP_SUMMARY
         shell: bash
 
-      # Apply schema changes to development branch
+        # Debug Database Connection
+      - name: Debug Database Connection
+        run: |
+          echo "DB_HOST: $DB_HOST"
+          echo "DB_PORT: $DB_PORT"
+          echo "DB_USERNAME: $DB_USERNAME"
+          echo "DB_DATABASE: $DB_DATABASE"
+          mysql --host="$DB_HOST" --user="$DB_USERNAME" --password="$DB_PASSWORD" --database="$DB_DATABASE" --execute="SHOW TABLES;"
+        env:
+          DB_HOST: ${{ steps.create_password.outputs.hostname }}
+          DB_PORT: 3306
+          DB_USERNAME: ${{ steps.create_password.outputs.username }}
+          DB_PASSWORD: ${{ steps.create_password.outputs.password }}
+          DB_DATABASE: deep-dive
+
+          # Apply schema changes to development branch
       - name: Apply schema changes to development branch
         run: php artisan migrate --force
 
