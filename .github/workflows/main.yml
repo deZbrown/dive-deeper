@@ -70,6 +70,7 @@ jobs:
           echo "DB_USERNAME=${{ steps.create_password.outputs.username }}" >> .env.testing
           echo "DB_PASSWORD=${{ steps.create_password.outputs.password }}" >> .env.testing
           echo "MYSQL_ATTR_SSL_CA=${{ env.MYSQL_ATTR_SSL_CA }}" >> .env.testing
+          echo "APP_KEY=base64:BVUuj5GubObhETE2TzUUyUht+HXqwkzhHKgdcrl1UMw=" >> .env.testing
           cp .env.example .env
           php artisan key:generate
           php artisan config:clear
