@@ -1,12 +1,107 @@
-name: Fly Deploy
-on: [push]
+name: PlanetScale and Fly.io Deployment
+
+on:
+  push:
+    branches:
+      - main
+
 env:
+  PLANETSCALE_SERVICE_TOKEN_ID: ${{ secrets.PLANETSCALE_SERVICE_TOKEN_ID }}
+  PLANETSCALE_SERVICE_TOKEN: ${{ secrets.PLANETSCALE_SERVICE_TOKEN }}
   FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
 jobs:
   deploy:
-    name: Deploy app
     runs-on: ubuntu-latest
+
+    env:
+      ORG_NAME: m82
+      DATABASE_NAME: deep-dive
+      BRANCH_NAME: main
+      MYSQL_ATTR_SSL_CA: /etc/ssl/certs/ca-certificates.crt
+
     steps:
-      - uses: actions/checkout@v2
-      - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy
+        # Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Install CA certificates
+      - name: Install and update CA certificates
+        run: sudo apt-get update && sudo apt-get install -y ca-certificates
+        shell: bash
+
+        # Setup PHP
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          extensions: mbstring, dom, ctype, json, curl, tokenizer, pdo, pdo_mysql, bcmath, zip, exif, pcntl
+          coverage: none
+
+      # Run composer install to get dependencies
+      - name: Install Dependencies
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
+        shell: bash
+
+      # Create PlanetScale testing branch
+      - name: Create PlanetScale testing branch
+        uses: planetscale/create-branch-action@v1
+        with:
+          org_name: ${{ env.ORG_NAME }}
+          database_name: ${{ env.DATABASE_NAME }}
+          branch_name: testing
+          from: ${{ env.BRANCH_NAME }}
+
+      # Create PlanetScale new branch password
+      - name: Create PlanetScale branch and password
+        uses: planetscale/create-branch-password-action@v1
+        with:
+          org_name: ${{ env.ORG_NAME }}
+          database_name: ${{ env.DATABASE_NAME }}
+          branch_name: testing
+          name: test-password
+        env:
+          PLANETSCALE_SERVICE_TOKEN_ID: ${{ secrets.PLANETSCALE_SERVICE_TOKEN_ID }}
+          PLANETSCALE_SERVICE_TOKEN: ${{ secrets.PLANETSCALE_SERVICE_TOKEN }}
+        id: create_password
+
+      # Update .env file for development branch
+      - name: Configure Laravel Environment
+        run: |
+          echo "DB_CONNECTION=mysql" >> .env.testing
+          echo "DB_HOST=${{ steps.create_password.outputs.hostname }}" >> .env.testing
+          echo "DB_PORT=3306" >> .env.testing
+          echo "DB_DATABASE=${{ env.DATABASE_NAME }}" >> .env.testing
+          echo "DB_USERNAME=${{ steps.create_password.outputs.username }}" >> .env.testing
+          echo "DB_PASSWORD=${{ steps.create_password.outputs.password }}" >> .env.testing
+          echo "MYSQL_ATTR_SSL_CA=${{ env.MYSQL_ATTR_SSL_CA }}" >> .env.testing
+        shell: bash
+
+      # Run tests
+      - name: Test Run
+        run: |
+          php artisan test --without-tty | tee test_results
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat test_results >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+        shell: bash
+
+      # Apply schema changes to development branch
+      - name: Apply schema changes to development branch
+        run: php artisan migrate --force
+
+      # Promote development branch to main (production)
+      - name: Promote development branch to main
+        run: pscale branch promote ${{ env.DATABASE_NAME }} testing
+
+      # Set up Fly.io CLI
+      - name: Setup flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      # Deploy to Fly.io
+      - name: Deploy to fly.io
+        run: flyctl deploy
+
+      # Delete development branch after successful deployment
+      - name: Delete development branch
+        run: pscale branch delete ${{ env.DATABASE_NAME }} testing
