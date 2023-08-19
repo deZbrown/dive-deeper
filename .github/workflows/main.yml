@@ -63,7 +63,7 @@ jobs:
       # Update .env file for development branch
       - name: Configure Laravel Environment
         run: |
-          echo "DB_CONNECTION=mysql" >> .env.testing
+          echo "DB_CONNECTION=mysql" > .env.testing
           echo "DB_HOST=aws.connect.psdb.cloud" >> .env.testing
           echo "DB_PORT=3306" >> .env.testing
           echo "DB_DATABASE=${{ env.DATABASE_NAME }}" >> .env.testing
@@ -71,7 +71,11 @@ jobs:
           echo "DB_PASSWORD=${{ steps.create_password.outputs.password }}" >> .env.testing
           echo "MYSQL_ATTR_SSL_CA=${{ env.MYSQL_ATTR_SSL_CA }}" >> .env.testing
           echo "APP_KEY=base64:BVUuj5GubObhETE2TzUUyUht+HXqwkzhHKgdcrl1UMw=" >> .env.testing
-          cp .env.testing .env
+        shell: bash
+
+      # Copy .env.testing to .env for Laravel
+      - name: Prepare .env for Laravel
+        run: cp .env.testing .env
         shell: bash
 
       # Run tests
@@ -79,14 +83,10 @@ jobs:
         run: php artisan test --without-tty tests/Feature | tee test_results
         shell: bash
 
-        # Debug Database Connection
+      # Debug Database Connection
       - name: Debug Database Connection
         run: |
-          echo "DB_HOST: $DB_HOST"
-          echo "DB_PORT: $DB_PORT"
-          echo "DB_USERNAME: $DB_USERNAME"
-          echo "DB_PASSWORD: $DB_PASSWORD"
-          echo "DB_DATABASE: $DB_DATABASE"
+          cat .env | grep DB_
           mysql --host="$DB_HOST" --user="$DB_USERNAME" --password="$DB_PASSWORD" --database="$DB_DATABASE" --execute="SHOW TABLES;"
         env:
           DB_HOST: aws.connect.psdb.cloud
@@ -94,7 +94,6 @@ jobs:
           DB_USERNAME: ${{ steps.create_password.outputs.username }}
           DB_PASSWORD: ${{ steps.create_password.outputs.password }}
           DB_DATABASE: deep-dive
-
 
         # Debug Database Connection
       - name: Debug Database Connection
