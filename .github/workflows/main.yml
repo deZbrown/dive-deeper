@@ -64,7 +64,7 @@ jobs:
       - name: Configure Laravel Environment
         run: |
           echo "DB_CONNECTION=mysql" >> .env.testing
-          echo "DB_HOST=${{ steps.create_password.outputs.hostname }}" >> $GITHUB_ENV
+          echo "DB_HOST=aws.connect.psdb.cloud" >> $GITHUB_ENV
           echo "DB_PORT=3306" >> .env.testing
           echo "DB_DATABASE=${{ env.DATABASE_NAME }}" >> .env.testing
           echo "DB_USERNAME=${{ steps.create_password.outputs.username }}" >> $GITHUB_ENV
@@ -72,9 +72,10 @@ jobs:
           echo "MYSQL_ATTR_SSL_CA=${{ env.MYSQL_ATTR_SSL_CA }}" >> .env.testing
           echo "APP_KEY=base64:BVUuj5GubObhETE2TzUUyUht+HXqwkzhHKgdcrl1UMw=" >> .env.testing
           cp .env.example .env
-          php artisan key:generate
-          php artisan config:clear
-          php artisan optimize:clear
+          echo "DB_PORT=3306" >> .env.testing
+          echo "DB_DATABASE=${{ env.DATABASE_NAME }}" >> .env
+          echo "DB_USERNAME=${{ steps.create_password.outputs.username }}" >> .env
+          echo "DB_PASSWORD=${{ steps.create_password.outputs.password }}" >> .env
         shell: bash
 
       # Run tests
