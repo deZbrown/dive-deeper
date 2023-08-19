@@ -60,10 +60,11 @@ jobs:
           PLANETSCALE_SERVICE_TOKEN: ${{ secrets.PLANETSCALE_SERVICE_TOKEN }}
         id: create_password
 
-      # Debug: Print DB username and password
-      - name: Debug DB Credentials
+      # Debug: Print all outputs from create_password step
+      - name: Debug create_password Outputs
         run: |
-          echo "DB_USERNAME: ${{ steps.create_password.outputs.username }}"
-          echo "DB_PASSWORD: ${{ steps.create_password.outputs.password }}"
+          echo "Username Output: ${{ steps.create_password.outputs.username }}"
+          echo "Password Output: ${{ steps.create_password.outputs.password }}"
+          echo "Hostname Output: ${{ steps.create_password.outputs.hostname }}"
         shell: bash
 
