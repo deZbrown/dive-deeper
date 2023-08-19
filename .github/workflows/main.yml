@@ -60,24 +60,33 @@ jobs:
           PLANETSCALE_SERVICE_TOKEN: ${{ secrets.PLANETSCALE_SERVICE_TOKEN }}
         id: create_password
 
-      # Update .env file for development branch
-      - name: Configure Laravel Environment
+      # Configure Laravel Environment for Testing
+      - name: Configure Laravel Environment for Testing
+        run: |
+          echo "DB_CONNECTION=mysql" >> .env.testing
+          echo "DB_HOST=${{ steps.create_password.outputs.hostname }}" >> .env.testing
+          echo "DB_PORT=3306" >> .env.testing
+          echo "DB_DATABASE=${{ env.DATABASE_NAME }}" >> .env.testing
+          echo "DB_USERNAME=${{ steps.create_password.outputs.username }}" >> .env.testing
+          echo "DB_PASSWORD=${{ steps.create_password.outputs.password }}" >> .env.testing
+          echo "MYSQL_ATTR_SSL_CA=${{ env.MYSQL_ATTR_SSL_CA }}" >> .env.testing
+          echo "APP_KEY=base64:BVUuj5GubObhETE2TzUUyUht+HXqwkzhHKgdcrl1UMw=" >> .env.testing
+        shell: bash
+
+      # Set Environment Variables for Subsequent Steps
+      - name: Set Environment Variables
         run: |
           echo "DB_HOST=${{ steps.create_password.outputs.hostname }}" >> $GITHUB_ENV
           echo "DB_PORT=3306" >> $GITHUB_ENV
           echo "DB_DATABASE=${{ env.DATABASE_NAME }}" >> $GITHUB_ENV
           echo "DB_USERNAME=${{ steps.create_password.outputs.username }}" >> $GITHUB_ENV
           echo "DB_PASSWORD=${{ steps.create_password.outputs.password }}" >> $GITHUB_ENV
-
-          # Modify .env file as needed for your application
-          echo "DB_CONNECTION=mysql" >> .env
-          echo "MYSQL_ATTR_SSL_CA=${{ env.MYSQL_ATTR_SSL_CA }}" >> .env
-          echo "APP_KEY=base64:BVUuj5GubObhETE2TzUUyUht+HXqwkzhHKgdcrl1UMw=" >> .env
         shell: bash
 
       # Run tests
       - name: Test Run
         run: |
+          cp .env.testing .env
           php artisan test --without-tty tests/Feature | tee test_results
           echo '```' >> $GITHUB_STEP_SUMMARY
           cat test_results >> $GITHUB_STEP_SUMMARY
