@@ -61,10 +61,8 @@ jobs:
         id: create_password
 
       # Debug: Print all outputs from create_password step
-      - name: Debug create_password Outputs
-        run: |
-          echo "Username Output: ${{ steps.create_password.outputs.username }}"
-          echo "Password Output: ${{ steps.create_password.outputs.password }}"
-          echo "Hostname Output: ${{ steps.create_password.outputs.hostname }}"
+      - name: Debug Environment Variables
+        run: env
         shell: bash
+
 
