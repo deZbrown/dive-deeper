@@ -9,26 +9,20 @@ env:
   PLANETSCALE_SERVICE_TOKEN_ID: ${{ secrets.PLANETSCALE_SERVICE_TOKEN_ID }}
   PLANETSCALE_SERVICE_TOKEN: ${{ secrets.PLANETSCALE_SERVICE_TOKEN }}
   FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-  PLANETSCALE_ORGANIZATION: m82
-  PLANETSCALE_PRODUCTION_BRANCH: main
-  DB_DATABASE: deep-dive
+  PLANETSCALE_ORGANIZATION: ${{ secrets.PLANETSCALE_ORGANIZATION }}
+  PLANETSCALE_PRODUCTION_BRANCH: ${{ secrets.PLANETSCALE_PRODUCTION_BRANCH }}
+  DB_DATABASE: ${{ secrets.DB_DATABASE }}
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
-    env:
-      ORG_NAME: ${{ env.PLANETSCALE_ORGANIZATION }}
-      DATABASE_NAME: ${{ env.DB_DATABASE }}
-      BRANCH_NAME: ${{ env.PLANETSCALE_PRODUCTION_BRANCH }}
-      MYSQL_ATTR_SSL_CA: /etc/ssl/certs/ca-certificates.crt
 
     steps:
       # Checkout code
       - name: Checkout code
         uses: actions/checkout@v2
 
-        # Setup PHP
+      # Setup PHP
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -45,10 +39,10 @@ jobs:
       - name: Create PlanetScale testing branch
         uses: planetscale/create-branch-action@v1
         with:
-          org_name: ${{ env.ORG_NAME }}
-          database_name: ${{ env.DATABASE_NAME }}
+          org_name: ${{ env.PLANETSCALE_ORGANIZATION }}
+          database_name: ${{ env.DB_DATABASE }}
           branch_name: testing
-          from: ${{ env.BRANCH_NAME }}
+          from: ${{ env.PLANETSCALE_PRODUCTION_BRANCH }}
 
       # Run tests
       - name: Test Run
@@ -57,7 +51,7 @@ jobs:
 
       # Delete development branch after tests
       - name: Delete development branch
-        run: pscale branch delete ${{ env.DATABASE_NAME }} testing
+        run: pscale branch delete ${{ env.DB_DATABASE }} testing
 
       # Run PlanetScale migrations
       - name: Run PlanetScale Migrations
