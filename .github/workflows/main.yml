@@ -5,14 +5,6 @@ on:
     branches:
       - main
 
-env:
-  PLANETSCALE_SERVICE_TOKEN_ID: ${{ secrets.PLANETSCALE_SERVICE_TOKEN_ID }}
-  PLANETSCALE_SERVICE_TOKEN: ${{ secrets.PLANETSCALE_SERVICE_TOKEN }}
-  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-  PLANETSCALE_ORGANIZATION: ${{ secrets.PLANETSCALE_ORGANIZATION }}
-  PLANETSCALE_PRODUCTION_BRANCH: ${{ secrets.PLANETSCALE_PRODUCTION_BRANCH }}
-  DB_DATABASE: ${{ secrets.DB_DATABASE }}
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -39,10 +31,36 @@ jobs:
       - name: Create PlanetScale testing branch
         uses: planetscale/create-branch-action@v1
         with:
-          org_name: ${{ env.PLANETSCALE_ORGANIZATION }}
-          database_name: ${{ env.DB_DATABASE }}
+          org_name: ${{ secrets.PLANETSCALE_ORGANIZATION }}
+          database_name: ${{ secrets.DB_DATABASE }}
           branch_name: testing
-          from: ${{ env.PLANETSCALE_PRODUCTION_BRANCH }}
+          from: ${{ secrets.PLANETSCALE_PRODUCTION_BRANCH }}
+
+      # Create PlanetScale new branch password
+      - name: Create PlanetScale branch and password
+        uses: planetscale/create-branch-password-action@v1
+        with:
+          org_name: ${{ secrets.PLANETSCALE_ORGANIZATION }}
+          database_name: ${{ secrets.DB_DATABASE }}
+          branch_name: testing
+          name: test-password
+        env:
+          PLANETSCALE_SERVICE_TOKEN_ID: ${{ secrets.PLANETSCALE_SERVICE_TOKEN_ID }}
+          PLANETSCALE_SERVICE_TOKEN: ${{ secrets.PLANETSCALE_SERVICE_TOKEN }}
+        id: create_password
+
+      # Update .env file for development branch
+      - name: Configure Laravel Environment
+        run: |
+          echo "DB_CONNECTION=${{ secrets.DB_CONNECTION }}" > .env.testing
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env.testing
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env.testing
+          echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> .env.testing
+          echo "DB_USERNAME=${{ steps.create_password.outputs.username }}" >> .env.testing
+          echo "DB_PASSWORD=${{ steps.create_password.outputs.password }}" >> .env.testing
+          echo "MYSQL_ATTR_SSL_CA=${{ secrets.MYSQL_ATTR_SSL_CA }}" >> .env.testing
+          echo "APP_KEY=${{ secrets.APP_KEY }}" >> .env.testing
+        shell: bash
 
       # Run tests
       - name: Test Run
@@ -51,7 +69,7 @@ jobs:
 
       # Delete development branch after tests
       - name: Delete development branch
-        run: pscale branch delete ${{ env.DB_DATABASE }} testing
+        run: pscale branch delete ${{ secrets.DB_DATABASE }} testing
 
       # Run PlanetScale migrations
       - name: Run PlanetScale Migrations
