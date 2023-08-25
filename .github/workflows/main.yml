@@ -76,7 +76,7 @@ jobs:
         env:
           PLANETSCALE_SERVICE_TOKEN_ID: ${{ secrets.PLANETSCALE_SERVICE_TOKEN_ID }}
           PLANETSCALE_SERVICE_TOKEN: ${{ secrets.PLANETSCALE_SERVICE_TOKEN }}
-        run: pscale branch delete ${{ secrets.DB_DATABASE }} testing
+        run: pscale branch delete ${{ secrets.DB_DATABASE }} testing --org ${{ secrets.PLANETSCALE_ORGANIZATION }}
 
       # Run PlanetScale migrations
       - name: Run PlanetScale Migrations
