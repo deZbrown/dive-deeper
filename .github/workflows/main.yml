@@ -67,8 +67,15 @@ jobs:
         run: php artisan test --without-tty tests/Feature | tee test_results
         shell: bash
 
+      # Install PlanetScale CLI using the provided action
+      - name: Setup pscale
+        uses: planetscale/setup-pscale-action@v1
+
       # Delete development branch after tests
       - name: Delete development branch
+        env:
+          PLANETSCALE_SERVICE_TOKEN_ID: ${{ secrets.PLANETSCALE_SERVICE_TOKEN_ID }}
+          PLANETSCALE_SERVICE_TOKEN: ${{ secrets.PLANETSCALE_SERVICE_TOKEN }}
         run: pscale branch delete ${{ secrets.DB_DATABASE }} testing
 
       # Run PlanetScale migrations
