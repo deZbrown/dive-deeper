@@ -9,15 +9,18 @@ env:
   PLANETSCALE_SERVICE_TOKEN_ID: ${{ secrets.PLANETSCALE_SERVICE_TOKEN_ID }}
   PLANETSCALE_SERVICE_TOKEN: ${{ secrets.PLANETSCALE_SERVICE_TOKEN }}
   FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+  PLANETSCALE_ORGANIZATION: m82
+  PLANETSCALE_PRODUCTION_BRANCH: main
+  DB_DATABASE: deep-dive
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     env:
-      ORG_NAME: m82
-      DATABASE_NAME: deep-dive
-      BRANCH_NAME: main
+      ORG_NAME: ${{ env.PLANETSCALE_ORGANIZATION }}
+      DATABASE_NAME: ${{ env.DB_DATABASE }}
+      BRANCH_NAME: ${{ env.PLANETSCALE_PRODUCTION_BRANCH }}
       MYSQL_ATTR_SSL_CA: /etc/ssl/certs/ca-certificates.crt
 
     steps:
@@ -47,22 +50,24 @@ jobs:
           branch_name: testing
           from: ${{ env.BRANCH_NAME }}
 
-      # Create PlanetScale new branch password
-      - name: Create PlanetScale branch and password
-        uses: planetscale/create-branch-password-action@v1
-        with:
-          org_name: ${{ env.ORG_NAME }}
-          database_name: ${{ env.DATABASE_NAME }}
-          branch_name: testing
-          name: test-password
-        env:
-          PLANETSCALE_SERVICE_TOKEN_ID: ${{ secrets.PLANETSCALE_SERVICE_TOKEN_ID }}
-          PLANETSCALE_SERVICE_TOKEN: ${{ secrets.PLANETSCALE_SERVICE_TOKEN }}
-        id: create_password
-
-      # Debug: Print all outputs from create_password step
-      - name: Debug Environment Variables
-        run: env
+      # Run tests
+      - name: Test Run
+        run: php artisan test --without-tty tests/Feature | tee test_results
         shell: bash
 
+      # Delete development branch after tests
+      - name: Delete development branch
+        run: pscale branch delete ${{ env.DATABASE_NAME }} testing
 
+      # Run PlanetScale migrations
+      - name: Run PlanetScale Migrations
+        run: php artisan pscale:migrate
+        shell: bash
+
+      # Set up Fly.io CLI
+      - name: Setup flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      # Deploy to Fly.io
+      - name: Deploy to fly.io
+        run: flyctl deploy
