@@ -71,6 +71,13 @@ jobs:
       - name: Setup pscale
         uses: planetscale/setup-pscale-action@v1
 
+      # List branches for debugging
+      - name: List branches
+        env:
+          PLANETSCALE_SERVICE_TOKEN_ID: ${{ secrets.PLANETSCALE_SERVICE_TOKEN_ID }}
+          PLANETSCALE_SERVICE_TOKEN: ${{ secrets.PLANETSCALE_SERVICE_TOKEN }}
+        run: pscale branch list ${{ secrets.DB_DATABASE }} --org ${{ secrets.PLANETSCALE_ORGANIZATION }}
+
       # Delete development branch after tests
       - name: Delete development branch
         env:
