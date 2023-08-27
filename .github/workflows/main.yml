@@ -34,6 +34,16 @@ jobs:
         run: composer install --no-progress --prefer-dist --optimize-autoloader
         shell: bash
 
+      # Create .env file and populate with environment variables
+      - name: Configure .env file
+        run: |
+          echo "PLANETSCALE_ORGANIZATION=${{ secrets.PLANETSCALE_ORGANIZATION }}" > .env
+          echo "PLANETSCALE_PRODUCTION_BRANCH=${{ secrets.PLANETSCALE_PRODUCTION_BRANCH }}" >> .env
+          echo "PLANETSCALE_SERVICE_TOKEN_ID=${{ secrets.PLANETSCALE_SERVICE_TOKEN_ID }}" >> .env
+          echo "PLANETSCALE_SERVICE_TOKEN=${{ secrets.PLANETSCALE_SERVICE_TOKEN }}" >> .env
+          echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> .env
+        shell: bash
+
       # Run PlanetScale migrations
       - name: Run PlanetScale Migrations
         run: php artisan pscale:migrate
