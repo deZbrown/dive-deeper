@@ -9,6 +9,13 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    env:
+      PLANETSCALE_ORGANIZATION: ${{ secrets.PLANETSCALE_ORGANIZATION }}
+      PLANETSCALE_PRODUCTION_BRANCH: ${{ secrets.PLANETSCALE_PRODUCTION_BRANCH }}
+      PLANETSCALE_SERVICE_TOKEN_ID: ${{ secrets.PLANETSCALE_SERVICE_TOKEN_ID }}
+      PLANETSCALE_SERVICE_TOKEN: ${{ secrets.PLANETSCALE_SERVICE_TOKEN }}
+      DB_DATABASE: ${{ secrets.DB_DATABASE }}
+
     steps:
       # Checkout code
       - name: Checkout code
@@ -26,64 +33,6 @@ jobs:
       - name: Install Dependencies
         run: composer install --no-progress --prefer-dist --optimize-autoloader
         shell: bash
-
-      # Create PlanetScale testing branch
-      - name: Create PlanetScale testing branch
-        uses: planetscale/create-branch-action@v1
-        with:
-          org_name: ${{ secrets.PLANETSCALE_ORGANIZATION }}
-          database_name: ${{ secrets.DB_DATABASE }}
-          branch_name: testing
-          from: ${{ secrets.PLANETSCALE_PRODUCTION_BRANCH }}
-
-      # Create PlanetScale new branch password
-      - name: Create PlanetScale branch and password
-        uses: planetscale/create-branch-password-action@v1
-        with:
-          org_name: ${{ secrets.PLANETSCALE_ORGANIZATION }}
-          database_name: ${{ secrets.DB_DATABASE }}
-          branch_name: testing
-          name: test-password
-        env:
-          PLANETSCALE_SERVICE_TOKEN_ID: ${{ secrets.PLANETSCALE_SERVICE_TOKEN_ID }}
-          PLANETSCALE_SERVICE_TOKEN: ${{ secrets.PLANETSCALE_SERVICE_TOKEN }}
-        id: create_password
-
-      # Update .env file for development branch
-      - name: Configure Laravel Environment
-        run: |
-          echo "DB_CONNECTION=${{ secrets.DB_CONNECTION }}" > .env.testing
-          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env.testing
-          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env.testing
-          echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> .env.testing
-          echo "DB_USERNAME=${{ steps.create_password.outputs.username }}" >> .env.testing
-          echo "DB_PASSWORD=${{ steps.create_password.outputs.password }}" >> .env.testing
-          echo "MYSQL_ATTR_SSL_CA=${{ secrets.MYSQL_ATTR_SSL_CA }}" >> .env.testing
-          echo "APP_KEY=${{ secrets.APP_KEY }}" >> .env.testing
-        shell: bash
-
-      # Run tests
-      - name: Test Run
-        run: php artisan test --without-tty tests/Feature | tee test_results
-        shell: bash
-
-      # Install PlanetScale CLI using the provided action
-      - name: Setup pscale
-        uses: planetscale/setup-pscale-action@v1
-
-      # List branches for debugging
-      - name: List branches
-        env:
-          PLANETSCALE_SERVICE_TOKEN_ID: ${{ secrets.PLANETSCALE_SERVICE_TOKEN_ID }}
-          PLANETSCALE_SERVICE_TOKEN: ${{ secrets.PLANETSCALE_SERVICE_TOKEN }}
-        run: pscale branch list ${{ secrets.DB_DATABASE }} --org ${{ secrets.PLANETSCALE_ORGANIZATION }}
-
-      # Delete development branch after tests
-      - name: Delete development branch
-        env:
-          PLANETSCALE_SERVICE_TOKEN_ID: ${{ secrets.PLANETSCALE_SERVICE_TOKEN_ID }}
-          PLANETSCALE_SERVICE_TOKEN: ${{ secrets.PLANETSCALE_SERVICE_TOKEN }}
-        run: pscale branch delete ${{ secrets.DB_DATABASE }} testing --org ${{ secrets.PLANETSCALE_ORGANIZATION }} --force
 
       # Run PlanetScale migrations
       - name: Run PlanetScale Migrations
